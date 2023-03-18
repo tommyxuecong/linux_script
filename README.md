@@ -2,7 +2,7 @@
 script used in cluster for  calculation conevience
 
 ## modify_INCAR
-this function will change certain INCAR key words in current and all subdirectory\\
+this function will change certain INCAR key words in current and all subdirectory \n
 example modify_INCAR NCORE 8\\
 this will set NCORE = 8 to all INCAR file.\\
 
