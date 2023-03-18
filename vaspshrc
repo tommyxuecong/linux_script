@@ -1,0 +1,39 @@
+# clean vasp output file,just keep 4 input file
+function vaspclean()
+{
+        shopt -s extglob
+        rm !(INCAR|POTCAR|POSCAR|KPOINTS)
+        if [  $1 = -a ]; then
+        rm -r !(INCAR|POTCAR|POSCAR|KPOINTS)
+        fi
+}
+# short for find_scf_energy  and find_energy, will print all final TOTEN in OUTCAR at all subdirectory
+function fse()
+{
+        OUTCAR_FILES=$(find $1 -name "OUTCAR" -path "*/scf/*")
+        for FILE in $OUTCAR_FILES; do
+                energy=$(grep -oP 'TOTEN\s+=\s+\K[-+]?[0-9]*\.?[0-9]+' "$FILE" | tail -1)
+                echo "$FILE: $energy"
+        done
+}
+function fe {
+        find . -name "OUTCAR" -type f | while read file; do
+                toten=$(grep -E "TOTEN.*eV" "$file" | tail -n 1)
+                if [ -n "$toten" ]; then
+                        echo "$file: $toten"
+                fi
+        done
+}
+# modify specific key work in all INCAR at current and all subdirectory
+modify_INCAR() {
+        keyword="$1"
+        value="$2"
+
+        find . -type f -name 'INCAR' -print0 | while IFS= read -r -d $'\0' file; do
+                sed -i -E "s/([[:space:]]*${keyword}[[:space:]]*=[[:space:]]*)([^[:space:]]+)/\1${value}/" "$file"
+                echo "Modified $file: Set ${keyword} to ${value}"
+        done
+}
+function recover_INCAR {
+        find . -type f -name "INCAR.bak" -exec sh -c 'mv "$0" "${0%.bak}"' {} \;
+}
