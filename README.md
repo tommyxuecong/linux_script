@@ -1,3 +1,6 @@
+#based on  chenyubi14 
+many thanks!
+
 # linux_script
 script used in cluster for  calculation conevience
 
